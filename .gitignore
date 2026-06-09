@@ -1,0 +1,11 @@
+node_modules/
+config/database.yml
+.env
+
+# Ignore dependency directories 
+node_modules/
+vendor/
+
+# Ignore compiled log files and temporary files
+*.log
+*.tmp
