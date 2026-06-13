@@ -2,6 +2,8 @@ const express = require('express');
 const User = require('../models/user');
 const bcrypt = require('bcrypt');
 const saltRounds = 10;
+const jwt = require('jsonwebtoken');
+const jwtSecret = process.env.JWT_SECRET;
 
 exports.registerUser = async( req, res) => {
     try{
@@ -43,9 +45,12 @@ exports.loginUser = async(req, res) => {
         if(!foundUser){
             return res.status(404).json({message: 'User doesnt exists'})
         }else{
-            const match = await bcrypt.compare(password, foundUser.password)
+            const match = await bcrypt.compare(password, foundUser.password);
             if(match){
-                return res.status(200).json({message: 'Login successful'})
+                const token = jwt.sign({userId: foundUser._id },
+                              jwtSecret,
+                              {expiresIn: '1d'})
+                return res.status(200).json({message: 'Login successful', token: token})
             }else{
                 return res.status(401).json({message: 'Invalid credentials'})
             }
